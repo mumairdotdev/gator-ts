@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 
-const repopath = 'workspace/boot.dev/blog-aggregator-ts';
+// const repopath = 'workspace/boot.dev/blog-aggregator-ts';
 const fileName = '.gatorconfig.json'
 
 export type Config = {
@@ -30,7 +30,7 @@ export function readConfig(): Config {
 }
 
 function getConfigFilePath(): string {
-    return path.join(os.homedir(), repopath, fileName);
+    return path.join(os.homedir(), fileName);
 }
 
 function writeConfig(config: Config): void {
