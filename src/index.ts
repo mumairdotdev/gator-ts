@@ -1,11 +1,13 @@
 import {registerCommands, runCommand, type CommandHandler} from './commands/commands.js';
-import {handlerLogin, handlerRegister} from './commands/users.js';
+import {handlerLogin, handlerRegister, handlerDeleteAllUsers, handlerListUsers} from './commands/users.js';
 
 async function main() {
     const commandsRegistry = {} as Record<string, CommandHandler>;
 
     await registerCommands(commandsRegistry, 'login', handlerLogin);
     await registerCommands(commandsRegistry, 'register', handlerRegister);
+    await registerCommands(commandsRegistry, 'users', handlerListUsers);
+    await registerCommands(commandsRegistry, 'reset', handlerDeleteAllUsers);
 
     const args = process.argv.slice(2);
     if (args.length === 0) {
