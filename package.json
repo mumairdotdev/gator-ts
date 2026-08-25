@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "tsx ./src/index.ts",
+    "start": "node api.js && tsx ./src/index.ts",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate"
   },
