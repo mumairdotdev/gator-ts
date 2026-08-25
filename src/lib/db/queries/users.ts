@@ -12,6 +12,11 @@ export async function getUserByName(name: string) {
     return user;
 }
 
+export async function getUserById(id: string) {
+    const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
+    return user;
+}
+
 export async function getAllUsers() {
     const usersList = await db.select().from(users);
     return usersList;

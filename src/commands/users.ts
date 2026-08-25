@@ -1,5 +1,5 @@
 import { setUser, readConfig } from '../config.js';
-import { createUser, getUserByName, deleteAllUsers, getAllUsers } from '../lib/db/queries/users.js';
+import { createUser, getUserByName, getAllUsers } from '../lib/db/queries/users.js';
 
 export async function handlerLogin(cmdName: string, ...args: string[]): Promise<void> {
     if (args.length < 1) {
@@ -27,12 +27,6 @@ export async function handlerRegister(cmdName: string, ...args: string[]): Promi
     setUser(newUser.name);
     console.log(`User ${newUser.name} has been created with ID ${newUser.id}`);
     
-}
-
-export async function handlerDeleteAllUsers(cmdName: string, ...args: string[]): Promise<void> {
-    const confirmation = args[0];
-    await deleteAllUsers();
-    console.log(`All users have been deleted`);
 }
 
 export async function handlerListUsers(cmdName: string, ...args: string[]): Promise<void> {
