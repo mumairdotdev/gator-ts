@@ -3,6 +3,9 @@ import {handlerLogin, handlerRegister, handlerListUsers} from './commands/users.
 import {handlerReset} from './commands/reset.js';
 import {handleRSSCommand} from './commands/aggregate.js';
 import { handlerAddFeed, handlerListFeeds } from './commands/feeds.js';
+import { handlerFollow, handlerFollowing } from './commands/feed-follows.js';
+import { handlerUnfollow } from './commands/feed-follows.js';
+import { middlewareLoggedIn } from './middleware.js';
 
 async function main() {
     const commandsRegistry = {} as Record<string, CommandHandler>;
@@ -12,9 +15,12 @@ async function main() {
     await registerCommands(commandsRegistry, 'users', handlerListUsers);
     await registerCommands(commandsRegistry, 'reset', handlerReset);
     await registerCommands(commandsRegistry, 'agg', handleRSSCommand);
-    await registerCommands(commandsRegistry, 'addfeed', handlerAddFeed);
+    await registerCommands(commandsRegistry, 'addfeed', middlewareLoggedIn(handlerAddFeed));
     await registerCommands(commandsRegistry, 'feeds', handlerListFeeds);
-    
+    await registerCommands(commandsRegistry, 'follow', middlewareLoggedIn(handlerFollow));
+    await registerCommands(commandsRegistry, 'following', middlewareLoggedIn(handlerFollowing));
+    await registerCommands(commandsRegistry, 'unfollow', middlewareLoggedIn(handlerUnfollow));
+
     const args = process.argv.slice(2);
     if (args.length === 0) {
         console.error('No command provided');

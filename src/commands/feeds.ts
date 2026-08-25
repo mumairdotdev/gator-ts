@@ -1,7 +1,9 @@
 import {createFeed, getFeeds} from '../lib/db/queries/feeds.js';
+import {createFeedFollow} from '../lib/db/queries/feed-follows.js';
 import {getUserById, getUserByName} from '../lib/db/queries/users.js';
 import type {Feed, User} from '../lib/db/schema.js';
 import {readConfig} from '../config.js';
+import { printFeedFollow } from './feed-follows.js';
 
 function printFeed(feed: Feed, user: User): void {
     console.log('Feed:');
@@ -14,31 +16,26 @@ function printFeed(feed: Feed, user: User): void {
     console.log(`* updatedAt: ${feed.updatedAt.toISOString()}`);
 }
 
-export async function handlerAddFeed(cmdName: string, ...args: string[]): Promise<void> {
+export async function handlerAddFeed(cmdName: string, user: User, ...args: string[]): Promise<void> {
     if (args.length < 2) {
         throw new Error(`Usage: ${cmdName} <feed_name> <feed_url>`);
     }
     const feedName = args[0];
     const feedUrl = args[1];
-    const currentUserName = readConfig().currentUserName;
-    if (!currentUserName) {
-        throw new Error(`No user is currently logged in. Please log in first.`);
-    }
-
-    const user = await getUserByName(currentUserName);
-    if (!user) {
-        throw new Error(`Current user ${currentUserName} does not exist`);
-    }
 
     const feed = await createFeed(feedName, feedUrl, user.id);
     if (!feed) {
         throw new Error(`Failed to create feed ${feedName}`);
     }
-    console.log(`Feed ${feedName} created successfully for user ${currentUserName}`);
+
+    const feedFollow = await createFeedFollow(feed.id, user.id);
+    printFeedFollow(feedFollow.userName, feedFollow.feedName);
+
+    console.log(`Feed ${feedName} created successfully for user ${user.name}`);
     printFeed(feed, user);
 }
 
-export async function handlerListFeeds(_: string, ...args: string[]): Promise<void> {
+export async function handlerListFeeds(_: string): Promise<void> {
     const feeds = await getFeeds();
     if (feeds.length === 0) {
         console.log('No feeds found.');
@@ -54,3 +51,4 @@ export async function handlerListFeeds(_: string, ...args: string[]): Promise<vo
         printFeed(feed, user);
     }
 }
+
