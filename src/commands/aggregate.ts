@@ -1,6 +1,8 @@
 import {RSSItem, fetchFeed} from '../lib/rss';
 import {getNextFeedToFetch, markFeedFetched} from '../lib/db/queries/feeds.js';
 import { parseDuration } from '../lib/time';
+import { Feed, NewPost } from '../lib/db/schema.js';
+import { createPost } from '../lib/db/queries/posts.js';
 
 export async function handleRSSCommand(commandName: string, ...args: string[]): Promise<void> {
     if (args.length < 1) {
@@ -43,7 +45,19 @@ async function scrapeFeeds() {
     await markFeedFetched(feed.id);
 
     for (const item of feedData.channel.item) {
-        console.log(`Item: ${item.title}`);
+        console.log(`Found post: ${item.title}`);
+
+        const now = new Date();
+
+        await createPost({
+            title: item.title,
+            url: item.link,
+            description: item.description,
+            publishedAt: new Date(item.pubDate),
+            feedId: feed.id,
+            createdAt: now,
+            updatedAt: now,
+        } as NewPost);
     }
 
     console.log(`Finished fetching feed: ${feed.name}`);

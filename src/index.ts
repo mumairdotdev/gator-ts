@@ -6,6 +6,7 @@ import { handlerAddFeed, handlerListFeeds } from './commands/feeds.js';
 import { handlerFollow, handlerFollowing } from './commands/feed-follows.js';
 import { handlerUnfollow } from './commands/feed-follows.js';
 import { middlewareLoggedIn } from './middleware.js';
+import { handlerBrowse } from './commands/browse.js';
 
 async function main() {
     const commandsRegistry = {} as Record<string, CommandHandler>;
@@ -20,7 +21,7 @@ async function main() {
     await registerCommands(commandsRegistry, 'follow', middlewareLoggedIn(handlerFollow));
     await registerCommands(commandsRegistry, 'following', middlewareLoggedIn(handlerFollowing));
     await registerCommands(commandsRegistry, 'unfollow', middlewareLoggedIn(handlerUnfollow));
-
+    await registerCommands(commandsRegistry, 'browse', middlewareLoggedIn(handlerBrowse));
     const args = process.argv.slice(2);
     if (args.length === 0) {
         console.error('No command provided');
